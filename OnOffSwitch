@@ -1,0 +1,82 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Windows.Forms;
+
+namespace shyama
+{
+    public class djshyamaonoffswitch : Button
+    {
+        public enum ToggleStates : uint
+        {
+            On = 1, Off = 0
+        }
+
+        public event EventHandler ToggleOn;
+        public event EventHandler ToggleOff;
+
+        [Category("Appearance")]
+        public string TextOff { get; set; }
+
+
+        [Category("Appearance")]
+        public string TextOn { get; set; }
+
+
+        [Category("Data")]
+        [SettingsBindable(true)]
+
+        public ToggleStates ToggleState { get; set; }
+
+        public override string Text
+        {
+            get
+            {
+                switch (ToggleState)
+                {
+                    case ToggleStates.Off:
+                        return TextOff;
+                    case ToggleStates.On:
+                        return TextOn;
+                    default:
+                        return "No state";
+                }
+            }
+        }
+
+        public djshyamaonoffswitch()
+        {
+            this.TextOff = "Off";
+            this.TextOn = "On";
+            this.ToggleState = ToggleStates.Off;
+        }
+
+        public djshyamaonoffswitch(string offText, string onText)
+        {
+            TextOn = offText;
+            TextOff = onText;
+        }
+
+        protected override void OnClick(EventArgs e)
+        {
+            base.OnClick(e);
+            switch (ToggleState)
+            {
+                case ToggleStates.Off:
+                    ToggleState = ToggleStates.On;
+                    if (ToggleOn != null) ToggleOn(this, e);
+                    break;
+                case ToggleStates.On:
+                    ToggleState = ToggleStates.Off;
+                    if (ToggleOff != null) ToggleOff(this, e);
+                    break;
+            }
+            base.Invalidate();
+
+
+        }
+    }
+}
